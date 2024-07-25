@@ -15,7 +15,8 @@ const config: Config = {
       },
       colors: {
         primary: '#3b71ca',
-        danger: '#DC4C64'
+        danger: '#DC4C64',
+        glass: 'rgba(0,0,0,0.3)'
       },
     },
   },

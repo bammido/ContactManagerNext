@@ -1,6 +1,9 @@
 // import React from "react";
 // import { input, TERipple } from "tw-elements-react";
 
+import Button from "../(components)/button";
+import Input from "../(components)/input";
+
 export default function BasicExample(): JSX.Element {
   return (
     <section className="h-screen">
@@ -21,13 +24,13 @@ export default function BasicExample(): JSX.Element {
               {/* <!--Sign in section--> */}
 
               <div className="flex flex-col">
-                <input
+                <Input
                     type="email"
                     placeholder="Email address"
                     className="mb-6 h-10 grow p-2 border-black border-2 rounded focus:border-primary outline-none transition-colors"
                 />
 
-                <input
+                <Input
                     type="password"
                     placeholder="Password"
                     className="mb-6 h-10 grow p-2 border-black border-2 rounded focus:border-primary outline-none transition-colors"
@@ -35,13 +38,7 @@ export default function BasicExample(): JSX.Element {
               </div>
 
               <div className="text-center">
-                  <button
-                    type="button"
-                    className="inline-block rounded bg-primary px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                  >
-                    Login
-                  </button>
-
+                  <Button label="LOGIN" />
                 {/* <!-- Register link --> */}
                 <p className="mb-0 mt-2 pt-1 text-sm font-semibold">
                   Don&apos;t have an account?{" "}

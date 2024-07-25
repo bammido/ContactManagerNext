@@ -19,7 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <HomeNav />
-        {children}
+        <main className="flex min-h-screen flex-col justify-between py-24 px-12">
+          {children}
+        </main>
       </body>
     </html>
   );
