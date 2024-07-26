@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { ToastContainer } from 'react-toastify';
 
+import { CookiesProvider } from 'next-client-cookies/server';
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,10 +23,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <HomeNav />
-        <main className="flex min-h-screen flex-col justify-between py-24 px-12">
-          <ToastContainer />
-          {children}
+        <main>
+          <div>
+            <CookiesProvider>
+              <HomeNav />
+              <div className="flex min-h-screen flex-col justify-between py-24 px-12">
+                  {children}
+                <ToastContainer />
+              </div>
+            </CookiesProvider>
+          </div>
         </main>
       </body>
     </html>

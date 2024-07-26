@@ -1,18 +1,16 @@
-import sleep from "./(helpers)/sleep"
+import { redirect } from "next/navigation"
 import GroupCard from "./groupCard"
 import { getGroups } from "./service/groups"
-import { IGroup } from "./types/group"
 
 
 export default async function Groups(){
-    const groups: IGroup[] = [
-        {groupName: 'design', id: 'design'}, 
-        {groupName: 'marketing', id: 'marketing'}, 
-        {groupName: 'vendas', id: 'vendas'}
-    ]
 
     const res = await (async () => {
-        return await getGroups()
+        try {
+            return await getGroups()
+        } catch (error: any) {
+            redirect('/login')
+        }
     })()
     
     return <section className="w-full flex flex-col gap-10">
