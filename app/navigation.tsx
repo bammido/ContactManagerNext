@@ -38,7 +38,7 @@ export default function HomeNav() {
                                 </Link>
                             </li>
                         </ul>
-                        <Button onClick={logOut} className="text-black">logout</Button>
+                        <Button onClick={logOut} className="text-white">logout</Button>
                     </div>
                 </div>
             </nav>
