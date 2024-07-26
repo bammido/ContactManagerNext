@@ -11,6 +11,8 @@ import GroupDetailsPageLoading from "./loading"
 import ContactForm, { IContactFormSubmit } from "./contactForm"
 import { postContact } from "@/app/service/contacts"
 
+import { toast } from 'react-toastify';
+
 interface GroupDetailsProps {
     params: { groupId: string }
 }
@@ -54,14 +56,24 @@ export default async function GroupDetailsPage({ params } : GroupDetailsProps) {
     }
 
     async function addNewContact({form}: IContactFormSubmit) {
-        await postContact({
-            name: form.name,
-            number: form.number,
-            groupId: params.groupId
-        })
+        try {
+            if(!form.name || !form.number){
+                toast.error('Necessário preencher todos os campos!')
+                return
+            }
 
-        setShowNewContact(false)
-        reload()
+            await postContact({
+                name: form.name,
+                number: form.number,
+                groupId: params.groupId
+            })
+    
+            setShowNewContact(false)
+            reload()
+            toast.success('Contato adicionado!')
+        } catch (error) {
+            toast.error('Ocorreu um erro inesperado!')
+        }
     }
 
     return <>

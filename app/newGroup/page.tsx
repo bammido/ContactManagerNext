@@ -5,6 +5,7 @@ import Button from "../(components)/button";
 import Input from "../(components)/input";
 import LetterXSvg from "../(components)/letterXSvg";
 import { postGroup } from "../service/groups";
+import { toast } from "react-toastify";
 
 export default function NewGroup() {
     const [file, setFile] = useState<null | File>(null)
@@ -27,14 +28,21 @@ export default function NewGroup() {
     }
 
     async function handleSubmit(){
-        if(!groupName){
-            return
-        }
+        try {
+            if(!groupName){
+                toast.error('Necessário preencher o nome do grupo!')
+                return
+            }
+    
+            await postGroup({
+                groupName,
+                file
+            })
 
-        postGroup({
-            groupName,
-            file
-        })
+            toast.success('Grupo criado!')
+        } catch (error) {
+            toast.error('Ocorreu um erro inesperado!')
+        }
     }
 
     return <div className="flex flex-col">

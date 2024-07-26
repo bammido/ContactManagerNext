@@ -7,6 +7,7 @@ import { IContact } from "@/app/types/contacts"
 import { useState } from "react"
 import ContactForm, { IContactFormSubmit } from "./contactForm"
 import { deleteContact, putContact } from "@/app/service/contacts"
+import { toast } from "react-toastify"
 
 interface GroupContactsTableProps {
     contacts: IContact[];
@@ -44,22 +45,37 @@ export default function GroupContactsTable({ contacts, reload, groupId }: GroupC
     }
 
     async function editContactSubmit({form, initialContact}: IContactFormSubmit) {
-        await putContact({
-            name: form.name,
-            number: form.number,
-            groupId: groupId,
-            id: (initialContact as IContact).id
-        })
-
-        closeEdit()
-        reload && reload()
+        try {
+            if(!form.name || !form.number){
+                toast.error('Necessário preencher todos os campos!')
+                return
+            }
+    
+            await putContact({
+                name: form.name,
+                number: form.number,
+                groupId: groupId,
+                id: (initialContact as IContact).id
+            })
+    
+            closeEdit()
+            reload && reload()
+            toast.success('Contato atualizado!')
+        } catch (error) {
+            toast.error('Ocorreu um erro inesperado!')
+        }
     }
     
     async function deleteContactSubmit() {
-        await deleteContact(contactodeDelete!)
+        try {
+            await deleteContact(contactodeDelete!)
 
-        closeDelete()
-        reload && reload()
+            closeDelete()
+            reload && reload()
+            toast.success('Contato excluído!')
+        } catch (error) {
+            toast.error('Ocorreu um erro inesperado!')
+        }
     }
 
     return <div className="relative overflow-x-auto shadow-md sm:rounded-lg">

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import HomeNav from "./navigation";
+import 'react-toastify/dist/ReactToastify.css';
+
+import { ToastContainer } from 'react-toastify';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +23,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <HomeNav />
         <main className="flex min-h-screen flex-col justify-between py-24 px-12">
+          <ToastContainer />
           {children}
         </main>
       </body>
