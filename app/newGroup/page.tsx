@@ -3,9 +3,12 @@
 import { useRef, useState } from "react";
 import Button from "../(components)/button";
 import Input from "../(components)/input";
+import LetterXSvg from "../(components)/letterXSvg";
+import { postGroup } from "../service/groups";
 
 export default function NewGroup() {
     const [file, setFile] = useState<null | File>(null)
+    const [groupName, setGroupName] = useState('')
 
     const fileRef = useRef<null | HTMLInputElement>(null);
 
@@ -20,9 +23,18 @@ export default function NewGroup() {
             return
         }
 
-        console.log(selectedFile)
-
         setFile(selectedFile)
+    }
+
+    async function handleSubmit(){
+        if(!groupName){
+            return
+        }
+
+        postGroup({
+            groupName,
+            file
+        })
     }
 
     return <div className="flex flex-col">
@@ -31,10 +43,27 @@ export default function NewGroup() {
             <Input 
                 placeholder="infra"
                 id="nomeDoGrupo"
+                value={groupName}
+                onChange={e => setGroupName(e.target.value)}
             />
         </div>
         <div className="flex flex-col gap-2">
-            <span>Arquivo: <b>{file?.name}</b></span>
+            {file?.name && <div className="flex gap-6 items-center">
+                <span>Arquivo: <b>{file?.name}</b></span>
+                <Button 
+                    onClick={() => {
+                        setFile(null);
+                        if(fileRef.current?.files?.length){
+                            fileRef.current.files = null
+                        }
+                    }}
+                    typeStyle="alternative"
+                >
+                    <LetterXSvg />
+                </Button>
+            </div>}
+
+            <small className="text-danger font-bold">Extensões aceitas: .xlsx, .csv e .txt</small>
 
             <Button 
                 onClick={() => fileRef?.current?.click()}
@@ -48,8 +77,17 @@ export default function NewGroup() {
                 className="hidden"
                 onChange={handleChangeFile}
                 ref={fileRef}
+                key={file?.name}
                 placeholder="subir arquivo de contatos"
             />
+
+            <div className="self-end">
+                <Button
+                    typeStyle="green"
+                    label="salvar"
+                    onClick={handleSubmit}
+                />
+            </div>
         </div>
     </div>
     

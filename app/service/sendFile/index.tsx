@@ -7,10 +7,6 @@ export default async function sendFile({file, groupId}: {file: File, groupId: st
         formData.append('file', file);
         formData.append('groupId', groupId);
 
-        // const arrayBuffer= await file.arrayBuffer()
-
-        console.log(formData.getAll('file'), file)
-
         await contactManagerNest.post('/sendFile', formData, {
             headers: {
                 "Content-Type": 'multipart/form-data',
