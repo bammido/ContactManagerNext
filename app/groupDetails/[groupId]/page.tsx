@@ -6,9 +6,10 @@ import Button from "@/app/(components)/button"
 import { useEffect, useRef, useState } from "react"
 import sendFile from "@/app/service/sendFile"
 import Modal from "@/app/(components)/modal"
-import Input from "@/app/(components)/input"
 import { getGroupDetails } from "@/app/service/groups"
 import GroupDetailsPageLoading from "./loading"
+import ContactForm, { IContactFormSubmit } from "./contactForm"
+import { postContact } from "@/app/service/contacts"
 
 interface GroupDetailsProps {
     params: { groupId: string }
@@ -18,17 +19,7 @@ export default async function GroupDetailsPage({ params } : GroupDetailsProps) {
     const [showNewContact, setShowNewContact] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [groupDetails, setGroupDetails] = useState<null | IGroupDetails>(null)
-    
-
-    const details: IGroupDetails = {
-        id: params.groupId,
-        groupName: params.groupId,
-        contacts: [
-            { id: '1', name: 'teste 1', number: '84996495206'},
-            { id: '2', name: 'teste 2', number: '84996495206'},
-            { id: '3', name: 'teste 3', number: '84996495206'},
-        ]
-    }
+    const [key, setKey] = useState(0)
 
     async function loadInfos(){
         setIsLoading(true)
@@ -39,9 +30,13 @@ export default async function GroupDetailsPage({ params } : GroupDetailsProps) {
 
     useEffect(() => {
         loadInfos()
-    }, [])
+    }, [key])
 
     const fileRef = useRef<null | HTMLInputElement>(null);
+
+    function reload() {
+        setKey(prev => prev + 1)
+    }
 
     async function handleChangeFile(event: React.ChangeEvent<HTMLInputElement>) {
         if(!event.target.files){
@@ -55,19 +50,29 @@ export default async function GroupDetailsPage({ params } : GroupDetailsProps) {
         }
 
         await sendFile({file: selectedFile, groupId: params.groupId})
+        reload()
+    }
 
-        if(!fileRef.current) {
-            return
-        }
+    async function addNewContact({form}: IContactFormSubmit) {
+        await postContact({
+            name: form.name,
+            number: form.number,
+            groupId: params.groupId
+        })
 
-        fileRef.current.files = null
+        setShowNewContact(false)
+        reload()
     }
 
     return <>
         {isLoading && <GroupDetailsPageLoading />}
         {!isLoading && groupDetails && <div className="flex flex-col gap-6">
             <h1>{ groupDetails.groupName }</h1>
-            <GroupContactsTable contacts={groupDetails.contacts} />
+            <GroupContactsTable 
+                contacts={groupDetails.contacts} 
+                reload={reload} 
+                groupId={params.groupId}
+            />
             <div className="flex justify-end">
                 <Button 
                     label="adicionar contato"
@@ -85,27 +90,17 @@ export default async function GroupDetailsPage({ params } : GroupDetailsProps) {
                     onChange={handleChangeFile}
                     ref={fileRef}
                     placeholder="subir arquivo de contatos"
-                    />
+                    key={key}
+                />
             </div>
             <Modal 
                 visible={showNewContact} 
                 close={() => setShowNewContact(false)}
                 title="Adicionar Contato"
                 >
-                <form className="flex flex-col gap-4">
-                    <div>
-                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome</label>
-                        <Input name="email" id="email" typeStyle="alternative" placeholder="fulano de tal" required />
-                    </div>
-                    <div>
-                        <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Número</label>
-                        <Input name="password" id="password" placeholder="99999999999" typeStyle="alternative" required />
-                    </div>
-                    <Button 
-                        type="submit" 
-                        label="enviar"
-                        />
-                </form>
+                <ContactForm 
+                    onSubmit={addNewContact}
+                />
             </Modal>
         </div>}
     </>

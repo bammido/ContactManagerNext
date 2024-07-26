@@ -5,17 +5,21 @@ import Input from "@/app/(components)/input"
 import Modal from "@/app/(components)/modal"
 import { IContact } from "@/app/types/contacts"
 import { useState } from "react"
+import ContactForm, { IContactFormSubmit } from "./contactForm"
+import { deleteContact, putContact } from "@/app/service/contacts"
 
 interface GroupContactsTableProps {
-    contacts: IContact[]
+    contacts: IContact[];
+    reload?: () => void;
+    groupId: string;
 }
 
-export default function GroupContactsTable({ contacts }: GroupContactsTableProps) {
+export default function GroupContactsTable({ contacts, reload, groupId }: GroupContactsTableProps) {
     const [showEditContact, setShowEditContact] = useState(false)
     const [contactToEdit, setContactToEdit] = useState<null | IContact>(null)
     
     const [showDeleteContact, setShowDeleteContact] = useState(false)
-    const [contactIdeDelete, setContactIdeDelete] = useState<null | string>(null)
+    const [contactodeDelete, setContactodeDelete] = useState<null | string>(null)
 
 
 
@@ -31,12 +35,31 @@ export default function GroupContactsTable({ contacts }: GroupContactsTableProps
 
     function showDelete(id: string) {
         setShowDeleteContact(true)
-        setContactIdeDelete(id)
+        setContactodeDelete(id)
     }
     
     function closeDelete() {
         setShowDeleteContact(false)
-        setContactIdeDelete(null)
+        setContactodeDelete(null)
+    }
+
+    async function editContactSubmit({form, initialContact}: IContactFormSubmit) {
+        await putContact({
+            name: form.name,
+            number: form.number,
+            groupId: groupId,
+            id: (initialContact as IContact).id
+        })
+
+        closeEdit()
+        reload && reload()
+    }
+    
+    async function deleteContactSubmit() {
+        await deleteContact(contactodeDelete!)
+
+        closeDelete()
+        reload && reload()
     }
 
     return <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -64,20 +87,10 @@ export default function GroupContactsTable({ contacts }: GroupContactsTableProps
             close={closeEdit}
             title="Editar Contato"
         >
-            <form className="flex flex-col gap-4">
-                <div>
-                    <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome</label>
-                    <Input value={contactToEdit?.name} name="email" id="email" typeStyle="alternative" placeholder="fulano de tal" required />
-                </div>
-                <div>
-                    <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Número</label>
-                    <Input value={contactToEdit?.number} name="password" id="password" placeholder="99999999999" typeStyle="alternative" required />
-                </div>
-                <Button
-                    type="submit" 
-                    label="enviar"
-                />
-            </form>
+            <ContactForm
+                initialContact={contactToEdit}
+                onSubmit={editContactSubmit}
+            />
         </Modal>
         <Modal 
             visible={showDeleteContact} 
@@ -93,6 +106,7 @@ export default function GroupContactsTable({ contacts }: GroupContactsTableProps
                 <Button
                     label="excluir"
                     typeStyle="red"
+                    onClick={deleteContactSubmit}
                 />
             </div>
         </Modal>
