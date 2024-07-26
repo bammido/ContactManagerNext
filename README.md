@@ -1,6 +1,4 @@
 
-## Description
-
 [link para acessar](https://contact-manager-next.vercel.app/)
 
 ## Como rodar o projeto
